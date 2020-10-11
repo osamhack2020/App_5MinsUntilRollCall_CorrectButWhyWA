@@ -10,12 +10,23 @@ import {
 	Button
 } from 'react-native-paper';
 
+import QRCode from 'react-native-qrcode-svg';
+
 export default function ShowQRPage({ navigation, route }) {
 	const { uniqueId } = route.params;
+	const info = {
+		id: uniqueId,
+		time: new Date(),
+	};
 	return (
 		<View style={styles.container}>
-			<Text style={styles.paragraph}>Welcome to ShowQRPage!!</Text>
-			<Text style={styles.paragraph}>{uniqueId}</Text>
+			<View style={styles.holder}>
+				<QRCode value={JSON.stringify(info)}
+					size={256}
+					color='black'
+					backgroundColor='white' />
+			</View>
+			<Text style={styles.paragraph}>{JSON.stringify(info)}</Text>
 			<Button style={styles.button} mode="contained"
         labelStyle={styles.buttontext}
         onPress={() => navigation.goBack()}>Back to Main</Button>
@@ -29,6 +40,9 @@ const styles = StyleSheet.create({
 		backgroundColor: '#ecf0f1',
 		padding: 24,
 	},
+  holder: {
+    alignItems: 'center',
+  },
 	paragraph: {
 		margin: 24,
 		fontSize: 18,

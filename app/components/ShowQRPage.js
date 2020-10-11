@@ -11,9 +11,11 @@ import {
 } from 'react-native-paper';
 
 export default function ShowQRPage({ navigation, route }) {
+	const { uniqueId } = route.params;
 	return (
 		<View style={styles.container}>
 			<Text style={styles.paragraph}>Welcome to ShowQRPage!!</Text>
+			<Text style={styles.paragraph}>{uniqueId}</Text>
 			<Button style={styles.button} mode="contained"
         labelStyle={styles.buttontext}
         onPress={() => navigation.goBack()}>Back to Main</Button>
@@ -25,7 +27,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		backgroundColor: '#ecf0f1',
-		padding: 8,
+		padding: 24,
 	},
 	paragraph: {
 		margin: 24,

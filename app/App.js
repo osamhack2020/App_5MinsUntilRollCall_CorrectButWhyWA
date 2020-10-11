@@ -32,6 +32,10 @@ import {
 	createStackNavigator
 } from '@react-navigation/stack';
 
+import {
+	getUniqueId,
+} from 'react-native-device-info';
+
 const Stack = createStackNavigator();
 
 const theme = {
@@ -44,6 +48,8 @@ const theme = {
 };
 
 const App = () => {
+	const uniqueId = getUniqueId();
+
 	return (
 		<PaperProvider theme={theme}>
 			<NavigationContainer>
@@ -57,6 +63,9 @@ const App = () => {
 						component={ShowQRPage}
 						options={{
 							headerShown: false
+						}}
+						initialParams={{
+							uniqueId: uniqueId
 						}} />
 					<Stack.Screen name="SchedulePage"
 						component={InputSchedulePage} />

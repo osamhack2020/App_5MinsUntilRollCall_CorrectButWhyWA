@@ -13,7 +13,7 @@ import {
 	ScrollView,
 	View,
 	Text,
-	StatusBar,
+	StatusBar
 } from 'react-native';
 
 import MainPage from './components/MainPage';
@@ -35,6 +35,7 @@ import {
 import {
 	getUniqueId,
 } from 'react-native-device-info';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Stack = createStackNavigator();
 
@@ -49,6 +50,42 @@ const theme = {
 
 const App = () => {
 	const uniqueId = getUniqueId();
+
+	async function saveSchedule(schedule) {
+		try {
+			console.log("save: " + JSON.stringify(schedule));
+			await AsyncStorage.setItem("@@schedule", JSON.stringify(schedule));
+		} catch (e) {
+			console.log("saveSchedule: (" + 	e.name + ") " + e.message);
+		}
+	}
+	
+	async function getSchedule() {
+		try {
+			const value = await AsyncStorage.getItem("@@schedule");
+			var valid = true;
+			const arr = JSON.parse(value, function(key, val) {
+				if(key === 'date') return new Date(val);
+				else return val;
+			});
+			if (Array.isArray(arr)) {
+				for(const each of arr) {
+					if(!(each.hasOwnProperty('date') && each.hasOwnProperty('isDayNight') && each.hasOwnProperty('status'))) {
+						valid = false;
+					}
+				}
+			}
+			else {
+				valid = false;
+			}
+			console.log("valid: " + valid);
+			console.log("value: " + value);
+			if(valid) return arr;
+			else return [];
+		} catch (e) {
+			console.log("getSchedule: (" + 	e.name + ") " + e.message);
+		}
+	}
 
 	return (
 		<PaperProvider theme={theme}>
@@ -68,7 +105,11 @@ const App = () => {
 							uniqueId: uniqueId
 						}} />
 					<Stack.Screen name="SchedulePage"
-						component={InputSchedulePage} />
+						component={InputSchedulePage}
+						initialParams={{
+							saveSchedule: saveSchedule,
+							getSchedule: getSchedule
+						}} />
 				</Stack.Navigator>
 			</NavigationContainer>
 		</PaperProvider>
@@ -77,23 +118,6 @@ const App = () => {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		padding: 24,
-	},
-	button: {
-		width: '100%',
-		padding: 4,
-		margin: 8
-	},
-	buttontext: {
-		fontSize: 16,
-		fontStyle: 'bold',
-	},
 });
-// const styles = StyleSheet.create({
-// });
 
 export default App;

@@ -65,12 +65,11 @@ const App = () => {
 			const value = await AsyncStorage.getItem("@@schedule");
 			var valid = true;
 			const arr = JSON.parse(value, function(key, val) {
-				if(key === 'date') return new Date(val);
-				else return val;
+				return val;
 			});
 			if (Array.isArray(arr)) {
 				for(const each of arr) {
-					if(!(each.hasOwnProperty('date') && each.hasOwnProperty('isDayNight') && each.hasOwnProperty('status'))) {
+					if(!(each.hasOwnProperty('date') && each.hasOwnProperty('isMN') && each.hasOwnProperty('status'))) {
 						valid = false;
 					}
 				}
@@ -102,7 +101,8 @@ const App = () => {
 							headerShown: false
 						}}
 						initialParams={{
-							uniqueId: uniqueId
+							uniqueId: uniqueId,
+							getSchedule: getSchedule
 						}} />
 					<Stack.Screen name="SchedulePage"
 						component={InputSchedulePage}

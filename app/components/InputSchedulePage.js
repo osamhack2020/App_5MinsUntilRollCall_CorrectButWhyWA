@@ -25,36 +25,53 @@ function getDates(year, month) {
 	return dates;
 }
 
-function DropDownMenu({ date, isDayNight, callback }) {
+function DropDownMenu({ date, isDayNight, status, callback }) {
 	const [visible, setVisible] = useState(false);
-	const [status, setStatus] = useState("출석");
 
 	return (
 		<Menu visible={visible}
 			onDismiss={() => {setVisible(false)}}
 			anchor={<Button style={{marginLeft: 8}} contentStyle={styles.picker} mode="outlined" onPress={() => {setVisible(true)}}>{status}</Button>}>
 			{["출석", "근무", "휴가"].map((option) => 
-				<Menu.Item onPress={() => {setStatus(option); setVisible(false); callback(date, isDayNight, option);}} title={option} />
+				<Menu.Item onPress={() => {setVisible(false); callback(date, isDayNight, option);}} title={option} />
 			)}
 		</Menu>
 	);
-  }
+}
 
 export default function InputSchedulePage({ navigation, route }) {
+	const { saveSchedule, getSchedule } = route.params;
 	const [year, setYear] = useState(new Date().getFullYear());
 	const [month, setMonth] = useState(new Date().getMonth());
 	const [dates, setDates] = useState([]);
+	const [changed, setChanged] = useState([]);
+
 	var flatListRef;
 	const item = new Date(2020, 10 - 1, 1);
-
+  
 	useEffect(() => {
 		setDates(getDates(year, month));
 	}, [year, month]);
+
+	useEffect(() => {
+		getSchedule().then((data) => {
+			console.log("data: " + JSON.stringify(data));
+			setChanged(data);
+		});
+	}, []);
 
 	function callback(date, isDayNight, option) {
 		console.log("dateCallback: " + date);
 		console.log("isDayNightCallback: " + isDayNight);
 		console.log("optionCallback: " + option);
+		setChanged(prev => {
+			var curr = [...prev];
+			const idx = curr.findIndex(element => (element.date.getTime() === date.getTime() && element.isDayNight === isDayNight));
+			curr.splice(idx, (idx == -1) ? 0 : 1, {date: date, isDayNight: isDayNight, status: option});
+			saveSchedule(curr);
+			return curr;
+		});
+		console.log("changed: " + JSON.stringify(changed));
 	}
 
 	return (
@@ -82,12 +99,17 @@ export default function InputSchedulePage({ navigation, route }) {
 				}}
 				data={dates}
 				horizontal={false}
-				renderItem={({item, index}) => 
-					<View style={styles.item}>
-						<Avatar.Text style={styles.badge} size={30} label={item.getDate()} />
-						<DropDownMenu style={styles.dropdown} date={item} isDayNight={index % 2 == 0 ? 'day' : 'night'} callback={callback.bind(this)} />
-					</View>
-				}
+				renderItem={({item, index}) => {
+					const isDayNight = index % 2 == 0 ? 'night' : 'day';
+					const element = changed.find(element => (element.date.getTime() === item.getTime() && element.isDayNight === isDayNight));
+					return (<View style={styles.item}>
+								<Avatar.Text style={styles.badge} size={30} label={item.getDate()} />
+								<DropDownMenu style={styles.dropdown} date={item} isDayNight={isDayNight} status={
+										element ? element.status : "출석"
+									} callback={callback.bind(this)} />
+							</View>);
+       			 }}
+     			extraData={changed}
 				numColumns={2} />
 
 			<Button style={styles.button} mode="contained"
@@ -98,6 +120,7 @@ export default function InputSchedulePage({ navigation, route }) {
 		</View>
 	);
 }
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,

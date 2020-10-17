@@ -14,6 +14,9 @@ import {
   	Menu
 } from 'react-native-paper';
 
+function dateToString(date) {
+	return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+}
 function getDates(year, month) {
 	var date = new Date(year, month, 1);
 	var dates = [new Date(year, month, 0), new Date(year, month, 1)];
@@ -25,7 +28,7 @@ function getDates(year, month) {
 	return dates;
 }
 
-function DropDownMenu({ date, isDayNight, status, callback }) {
+function DropDownMenu({ date, isMN, status, callback }) {
 	const [visible, setVisible] = useState(false);
 
 	return (
@@ -33,7 +36,7 @@ function DropDownMenu({ date, isDayNight, status, callback }) {
 			onDismiss={() => {setVisible(false)}}
 			anchor={<Button style={{marginLeft: 8}} contentStyle={styles.picker} mode="outlined" onPress={() => {setVisible(true)}}>{status}</Button>}>
 			{["출석", "근무", "휴가"].map((option) => 
-				<Menu.Item onPress={() => {setVisible(false); callback(date, isDayNight, option);}} title={option} />
+				<Menu.Item onPress={() => {setVisible(false); callback(date, isMN, option);}} title={option} />
 			)}
 		</Menu>
 	);
@@ -47,7 +50,6 @@ export default function InputSchedulePage({ navigation, route }) {
 	const [changed, setChanged] = useState([]);
 
 	var flatListRef;
-	const item = new Date(2020, 10 - 1, 1);
   
 	useEffect(() => {
 		setDates(getDates(year, month));
@@ -60,14 +62,14 @@ export default function InputSchedulePage({ navigation, route }) {
 		});
 	}, []);
 
-	function callback(date, isDayNight, option) {
+	function callback(date, isMN, option) {
 		console.log("dateCallback: " + date);
-		console.log("isDayNightCallback: " + isDayNight);
+		console.log("isMNCallback: " + isMN);
 		console.log("optionCallback: " + option);
 		setChanged(prev => {
 			var curr = [...prev];
-			const idx = curr.findIndex(element => (element.date.getTime() === date.getTime() && element.isDayNight === isDayNight));
-			curr.splice(idx, (idx == -1) ? 0 : 1, {date: date, isDayNight: isDayNight, status: option});
+			const idx = curr.findIndex(element => (element.date === dateToString(date) && element.isMN === isMN));
+			curr.splice(idx, (idx == -1) ? 0 : 1, {date: dateToString(date), isMN: isMN, status: option});
 			saveSchedule(curr);
 			return curr;
 		});
@@ -100,11 +102,11 @@ export default function InputSchedulePage({ navigation, route }) {
 				data={dates}
 				horizontal={false}
 				renderItem={({item, index}) => {
-					const isDayNight = index % 2 == 0 ? 'night' : 'day';
-					const element = changed.find(element => (element.date.getTime() === item.getTime() && element.isDayNight === isDayNight));
+					const isMN = index % 2 == 0 ? 'N' : 'M';
+					const element = changed.find(element => (element.date === dateToString(item) && element.isMN === isMN));
 					return (<View style={styles.item}>
 								<Avatar.Text style={styles.badge} size={30} label={item.getDate()} />
-								<DropDownMenu style={styles.dropdown} date={item} isDayNight={isDayNight} status={
+								<DropDownMenu style={styles.dropdown} date={item} isMN={isMN} status={
 										element ? element.status : "출석"
 									} callback={callback.bind(this)} />
 							</View>);

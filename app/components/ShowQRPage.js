@@ -14,18 +14,23 @@ import {
 import QRCode from 'react-native-qrcode-svg';
 
 const ShowQRPage = ({ navigation, route }) => {
-	const { uniqueId } = route.params;
+	const { uniqueId, getSchedule } = route.params;
 	const [info, setInfo] = useState({
 		id: uniqueId,
 		time: new Date(),
+		schedule: []
 	});
 	const [progress, setProgress] = useState(0);
 	const maxProgress = 10;
+
 
 	useEffect(() => {
 		const progressId = setInterval(() => {
 			setProgress(p => Math.min(maxProgress, p + 1));
 		}, 1000);
+		getSchedule().then((data) => {
+			setInfo({id: uniqueId, time: new Date(), schedule: data});
+		})
 		return () => {
 			if(progressId) clearInterval(progressId);
 		};

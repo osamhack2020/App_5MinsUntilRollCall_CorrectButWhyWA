@@ -21,8 +21,10 @@ const ShowQRPage = ({ navigation, route }) => {
 		schedule: []
 	});
 	const [progress, setProgress] = useState(0);
+	const [imageData, setImageData] = useState("");
 	const maxProgress = 10;
 
+	var qrRef;
 
 	useEffect(() => {
 		const progressId = setInterval(() => {
@@ -30,7 +32,8 @@ const ShowQRPage = ({ navigation, route }) => {
 		}, 1000);
 		getSchedule().then((data) => {
 			setInfo({id: uniqueId, time: new Date(), schedule: data});
-		})
+		});
+
 		return () => {
 			if(progressId) clearInterval(progressId);
 		};
@@ -42,6 +45,12 @@ const ShowQRPage = ({ navigation, route }) => {
 				navigation.goBack();
 			}, 1000);
 		}
+		if(progress == Math.floor(maxProgress / 2)) {
+			qrRef.toDataURL((dataURL) => {
+				console.log("dataURL: " + dataURL);
+				setImageData(dataURL);
+			});
+		}
 	}, [progress, navigation]);
 
 	return (
@@ -50,9 +59,11 @@ const ShowQRPage = ({ navigation, route }) => {
 				<QRCode value={JSON.stringify(info)}
 					size={256}
 					color='black'
-					backgroundColor='white' />
+					backgroundColor='white'
+					getRef={(ref) => {qrRef = ref;}} />
 			</View>
 			<Text style={styles.paragraph}>{JSON.stringify(info)}</Text>
+			<Text style={styles.paragraph}>{"length: " + imageData.length + ", data: " + imageData.substring(0, 20)}</Text>
 			<ProgressBar style={styles.progressbar}
 				progress={progress / maxProgress} />
 			<View style={styles.holder}>

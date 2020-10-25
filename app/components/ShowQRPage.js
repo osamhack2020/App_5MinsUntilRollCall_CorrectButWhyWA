@@ -88,12 +88,9 @@ const ShowQRPage = ({ navigation, route }) => {
 				<QRCode value={JSON.stringify(info)}
 					size={256}
 					color='black'
-					backgroundColor='white'
+					backgroundColor='#c5d6fe'
 					getRef={(ref) => {qrRef = ref;}} />
 			</View>
-			<Text style={styles.paragraph}>{JSON.stringify(info)}</Text>
-			<Text style={styles.paragraph}>{"length: " + imageData.length + ", data: " + imageData.substring(0, 20)}</Text>
-			<Text style={styles.paragraph}>{result}</Text>
 			<ProgressBar style={styles.progressbar}
 				progress={progress / maxProgress} />
 			<View style={styles.holder}>
@@ -110,8 +107,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		justifyContent: 'center',
-		backgroundColor: '#ecf0f1',
 		padding: 24,
+		backgroundColor: '#c5d6fe',
 	},
 	holder: {
 		alignItems: 'center',

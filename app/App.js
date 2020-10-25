@@ -8,12 +8,7 @@
 
 import React from 'react';
 import {
-	SafeAreaView,
 	StyleSheet,
-	ScrollView,
-	View,
-	Text,
-	StatusBar
 } from 'react-native';
 
 import MainPage from './components/MainPage';
@@ -21,7 +16,6 @@ import ShowQRPage from './components/ShowQRPage';
 import InputSchedulePage from './components/InputSchedulePage';
 
 import {
-	Button,
 	DefaultTheme,
 	Provider as PaperProvider,
 } from 'react-native-paper';
@@ -44,7 +38,8 @@ const theme = {
 	roundness: 2,
 	colors: {
 		...DefaultTheme.colors,
-		primary: '#24355C'
+		primary: '#24355C',
+		background: '#c5d6fe',
 	}
 };
 
@@ -93,7 +88,8 @@ const App = () => {
 					<Stack.Screen name="MainPage"
 						component={MainPage}
 						options={{
-							title: "전달, 전달, 점호 5분전"
+							title: "전달, 전달, 점호 5분전",
+							headerShown: false
 						}} />
 					<Stack.Screen name="QRPage"
 						component={ShowQRPage}
@@ -106,6 +102,9 @@ const App = () => {
 						}} />
 					<Stack.Screen name="SchedulePage"
 						component={InputSchedulePage}
+						options={{
+							headerShown: false
+						}}
 						initialParams={{
 							saveSchedule: saveSchedule,
 							getSchedule: getSchedule

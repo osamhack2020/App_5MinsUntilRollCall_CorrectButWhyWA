@@ -42,7 +42,7 @@ function DropDownMenu({ date, isMN, status, callback }) {
 	);
 }
 
-export default function InputSchedulePage({ navigation, route }) {
+const InputSchedulePage = ({ navigation, route }) => {
 	const { saveSchedule, getSchedule } = route.params;
 	const [year, setYear] = useState(new Date().getFullYear());
 	const [month, setMonth] = useState(new Date().getMonth());
@@ -127,8 +127,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		justifyContent: 'center',
-		backgroundColor: '#ecf0f1',
-		padding: 8,
+		padding: 24,
+		backgroundColor: '#c5d6fe',
 	},
 	button: {
 		width: '100%',
@@ -141,11 +141,11 @@ const styles = StyleSheet.create({
 	},
 	monthcontroller: {
 		flexDirection: 'row',
-		alignItems: 'stretch',
+		alignItems: 'center',
 		justifyContent: 'space-between'
 	},
 	month: {
-		fontSize: 18,
+		fontSize: 24,
 		fontStyle: 'bold',
 	},
 	columns: {
@@ -184,3 +184,5 @@ const styles = StyleSheet.create({
 		fontStyle: 'bold'
 	}
 });
+
+export default InputSchedulePage;

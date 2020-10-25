@@ -2,20 +2,15 @@ import React, { useState } from 'react';
 
 import {
 	View,
-	Image,
 	StyleSheet,
+	Image,
+	Text,
 } from 'react-native';
 
 import {
 	Button,
 	TextInput
 } from 'react-native-paper';
-import {
-	NavigationContainer
-} from '@react-navigation/native';
-import {
-	createStackNavigator
-} from '@react-navigation/stack';
 
 import ReactNativeBiometrics from 'react-native-biometrics';
 
@@ -23,6 +18,12 @@ const MainPage = ({ navigation }) => {
 	const [milID, setMilID] = useState("");
 	return (
 		<View style={styles.container}>
+			<View style={styles.holder}>
+				<Image source={require('../assets/logo.png')} />
+			</View>
+			<View style={styles.holder}>
+				<Text style={styles.title}>전달, 전달, 점호 5분전</Text>
+			</View>
 			<View style={styles.holder}>
 				<TextInput style={styles.textinput}
 					label="Military ID"
@@ -89,11 +90,21 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		padding: 24,
+		backgroundColor: '#c5d6fe',
+	},
+	image: {
+	  width: 128,
+	  height: 128,
 	},
 	holder: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		margin: 24
+	},
+	title: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		color: '#5f8cf5',
 	},
 	textinput: {
 		flex: 1

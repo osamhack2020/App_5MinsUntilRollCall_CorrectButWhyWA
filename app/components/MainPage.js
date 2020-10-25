@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
 	View,
@@ -7,7 +7,8 @@ import {
 } from 'react-native';
 
 import {
-	Button
+	Button,
+	TextInput
 } from 'react-native-paper';
 import {
 	NavigationContainer
@@ -19,8 +20,16 @@ import {
 import ReactNativeBiometrics from 'react-native-biometrics';
 
 const MainPage = ({ navigation }) => {
+	const [milID, setMilID] = useState("");
 	return (
 		<View style={styles.container}>
+			<View style={styles.holder}>
+				<TextInput style={styles.textinput}
+					label="Military ID"
+					value={milID}
+					onChangeText={milID => setMilID(milID)}
+					/>
+			</View>
 			<Button style={styles.button} mode="contained"
 				labelStyle={styles.buttontext}
 				onPress={() => {
@@ -29,7 +38,10 @@ const MainPage = ({ navigation }) => {
 							const { success } = resultObject;
 
 							if (success) {
-								navigation.navigate('QRPage');
+								navigation.navigate('QRPage', {
+									milID: milID,
+									submit: true
+								});
 							} else {
 								console.log('cancelled');
 							}
@@ -38,7 +50,29 @@ const MainPage = ({ navigation }) => {
 							console.log('biometrics failed');
 						});
 				}}>
-				Show QR
+				Submit Phone
+			</Button>
+			<Button style={styles.button} mode="contained"
+				labelStyle={styles.buttontext}
+				onPress={() => {
+					ReactNativeBiometrics.simplePrompt({promptMessage: 'Confirm fingerprint'})
+						.then((resultObject) => {
+							const { success } = resultObject;
+
+							if (success) {
+								navigation.navigate('QRPage', {
+									milID: milID,
+									submit: false
+								});
+							} else {
+								console.log('cancelled');
+							}
+						})
+						.catch(() => {
+							console.log('biometrics failed');
+						});
+				}}>
+				Get Phone
 			</Button>
 			<Button style={styles.button} mode="contained"
 				labelStyle={styles.buttontext}
@@ -55,6 +89,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		padding: 24,
+	},
+	holder: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		margin: 24
+	},
+	textinput: {
+		flex: 1
 	},
 	button: {
 		width: '100%',

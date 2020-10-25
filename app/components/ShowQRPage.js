@@ -14,15 +14,18 @@ import {
 import QRCode from 'react-native-qrcode-svg';
 
 const ShowQRPage = ({ navigation, route }) => {
-	const { uniqueId, getSchedule } = route.params;
+	const { uniqueId, getSchedule, milID, submit } = route.params;
 	const [info, setInfo] = useState({
 		id: uniqueId,
 		time: new Date(),
 		schedule: []
 	});
 	const [progress, setProgress] = useState(0);
+	const [imageData, setImageData] = useState("");
+	const [result, setResult] = useState("");
 	const maxProgress = 10;
 
+	var qrRef;
 
 	useEffect(() => {
 		const progressId = setInterval(() => {
@@ -30,7 +33,8 @@ const ShowQRPage = ({ navigation, route }) => {
 		}, 1000);
 		getSchedule().then((data) => {
 			setInfo({id: uniqueId, time: new Date(), schedule: data});
-		})
+		});
+
 		return () => {
 			if(progressId) clearInterval(progressId);
 		};
@@ -42,6 +46,40 @@ const ShowQRPage = ({ navigation, route }) => {
 				navigation.goBack();
 			}, 1000);
 		}
+		if(progress == Math.floor(maxProgress / 2)) {
+			// qrRef.toDataURL((dataURL) => {
+			// 	console.log("dataURL: " + dataURL);
+			// 	fetch('http://correctbutwhywa.koreacentral.cloudapp.azure.com:8081/phone/qrcode', {
+			// 		method: 'POST',
+			// 		headers: {
+			// 			Accept: "application/json",
+			// 			"Content-Type": "application/json"
+			// 		},
+			// 		body: JSON.stringify({img: 'data:image/png;base64,' + dataURL})
+			// 	}).then((response) => setResult(response))
+			// 	.catch((error) => setResult(error));
+			// 	setImageData(dataURL);
+			// });
+			if(submit) {
+				fetch('http://correctbutwhywa.koreacentral.cloudapp.azure.com:8081/database/update/phone_in', {
+					method: 'POST',
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({phone_in: new Date().toISOString().slice(0, 19).replace('T', ' '), military_number: milID})
+				}).then((response) => setResult(JSON.stringify(response)))
+				.catch((error) => setResult(JSON.stringify(error)));
+			} else {
+				fetch('http://correctbutwhywa.koreacentral.cloudapp.azure.com:8081/database/update/phone_out', {
+					method: 'POST',
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({phone_out: new Date().toISOString().slice(0, 19).replace('T', ' '), military_number: milID})
+				}).then((response) => setResult(JSON.stringify(response)))
+				.catch((error) => setResult(JSON.stringify(error)));
+			}
+		}
 	}, [progress, navigation]);
 
 	return (
@@ -50,9 +88,12 @@ const ShowQRPage = ({ navigation, route }) => {
 				<QRCode value={JSON.stringify(info)}
 					size={256}
 					color='black'
-					backgroundColor='white' />
+					backgroundColor='white'
+					getRef={(ref) => {qrRef = ref;}} />
 			</View>
 			<Text style={styles.paragraph}>{JSON.stringify(info)}</Text>
+			<Text style={styles.paragraph}>{"length: " + imageData.length + ", data: " + imageData.substring(0, 20)}</Text>
+			<Text style={styles.paragraph}>{result}</Text>
 			<ProgressBar style={styles.progressbar}
 				progress={progress / maxProgress} />
 			<View style={styles.holder}>

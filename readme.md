@@ -1,6 +1,10 @@
 # 전달, 전달, 점호 5분전
 ![Logo](./images/Banner.png)
 
+* App 저장소: https://github.com/osamhack2020/App_5MinsUntilRollCall_CorrectButWhyWA
+* IoT 저장소: https://github.com/osamhack2020/IoT_5MinsUntilRollCall_CorrectButWhyWA
+* Web 저장소: https://github.com/osamhack2020/Web_5MinsUntilRollCall_CorrectButWhyWA
+
 ## 프로젝트 설명 (Project Description)
 **비대면 스마트폰 반납** 및 **비대면 점호**를 목표로 하는 프로젝트입니다. 스마트폰의 **생체인식 기술**과 **모바일 신분증 기술**을 활용하였습니다.
 
